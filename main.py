@@ -11,7 +11,7 @@ from ucimlrepo import fetch_ucirepo
 from anfis_model import ANFIS
 
 st.set_page_config(layout="wide")
-st.title("🔧 Neuro-Fuzzy ANFIS vs MLP")
+st.title("Neuro-Fuzzy ANFIS vs MLP")
 
 # --- DADOS ---
 st.header("📊 Configuração dos Dados")
