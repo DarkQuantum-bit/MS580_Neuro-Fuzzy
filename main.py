@@ -11,7 +11,7 @@ from ucimlrepo import fetch_ucirepo
 from anfis_model import ANFIS
 
 st.set_page_config(layout="wide")
-st.title("Neuro-Fuzzy ANFIS vs MLP")
+st.title("📈 Comparação: Neuro-Fuzzy ANFIS vs MLP")
 
 # --- DADOS ---
 st.header("📊 Configuração dos Dados")
@@ -30,14 +30,25 @@ features = st.multiselect("Variáveis de entrada", df.columns.tolist(), default=
 target = st.selectbox("Variável alvo", df.columns, index=df.columns.get_loc('Global_active_power'))
 
 # --- CONFIGURAÇÃO DO MODELO ---
-st.header("⚙️ Parâmetros da ANFIS")
-col1, col2 = st.columns(2)
-with col1:
-    n_rules = st.slider("Número de regras fuzzy", 2, 10, 4)
-    mf_type = st.selectbox("Tipo de função de pertinência", ["gaussiana"])
-with col2:
-    epochs = st.slider("Épocas", 10, 500, 100, step=10)
-    learning_rate = st.slider("Taxa de aprendizado", 0.001, 0.1, 0.01)
+st.header("⚙️ Configuração do Modelo ANFIS")
+preset = st.selectbox("Escolha um perfil de configuração:", [
+    "Rápido (2 regras, 50 épocas, LR=0.05)",
+    "Balanceado (4 regras, 100 épocas, LR=0.01)",
+    "Preciso (6 regras, 200 épocas, LR=0.005)"
+])
+
+if preset == "Rápido (2 regras, 50 épocas, LR=0.05)":
+    n_rules = 2
+    epochs = 50
+    learning_rate = 0.05
+elif preset == "Balanceado (4 regras, 100 épocas, LR=0.01)":
+    n_rules = 4
+    epochs = 100
+    learning_rate = 0.01
+else:
+    n_rules = 6
+    epochs = 200
+    learning_rate = 0.005
 
 # --- PROCESSAMENTO ---
 X = df[features].values
@@ -84,38 +95,42 @@ if st.button("🚀 Treinar modelos"):
 
     # --- Comparativos Real vs Previsao ---
     st.subheader("📊 Real vs ANFIS")
-    fig_real_anfis, ax1 = plt.subplots()
+    fig_real_anfis, ax1 = plt.subplots(figsize=(10, 4))
     ax1.plot(y_test_real, label="Real", alpha=0.7)
     ax1.plot(y_pred_anfis, label="ANFIS", alpha=0.7)
-    ax1.set_title("Real vs ANFIS")
+    ax1.set_title("Previsão com ANFIS", fontsize=14)
     ax1.set_xlabel("Amostras")
     ax1.set_ylabel("Consumo de Energia (kW)")
     ax1.legend()
+    ax1.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig_real_anfis)
 
     st.subheader("📊 Real vs MLP")
-    fig_real_mlp, ax2 = plt.subplots()
+    fig_real_mlp, ax2 = plt.subplots(figsize=(10, 4))
     ax2.plot(y_test_real, label="Real", alpha=0.7)
     ax2.plot(y_pred_mlp, label="MLP", alpha=0.7)
-    ax2.set_title("Real vs MLP")
+    ax2.set_title("Previsão com MLP", fontsize=14)
     ax2.set_xlabel("Amostras")
     ax2.set_ylabel("Consumo de Energia (kW)")
     ax2.legend()
+    ax2.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig_real_mlp)
 
     # --- Curvas de Convergência ---
     st.subheader("📉 Curva de Convergência do ANFIS")
-    fig2, ax2 = plt.subplots()
-    ax2.plot(anfis.loss_history, marker='o')
+    fig2, ax2 = plt.subplots(figsize=(8, 3))
+    ax2.plot(anfis.loss_history, marker='o', color='blue')
     ax2.set_xlabel("Épocas")
     ax2.set_ylabel("MAE")
     ax2.set_title("Convergência do ANFIS")
+    ax2.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig2)
 
     st.subheader("📉 Curva de Convergência do MLP")
-    fig3, ax3 = plt.subplots()
+    fig3, ax3 = plt.subplots(figsize=(8, 3))
     ax3.plot(mlp_loss, marker='s', color='orange')
     ax3.set_xlabel("Épocas")
     ax3.set_ylabel("MAE")
     ax3.set_title("Convergência do MLP")
+    ax3.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig3)
