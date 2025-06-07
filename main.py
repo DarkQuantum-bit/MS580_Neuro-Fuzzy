@@ -134,3 +134,26 @@ if st.button("🚀 Treinar modelos"):
     ax3.set_title("Convergência do MLP")
     ax3.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig3)
+
+    # --- Gráficos de resíduos ---
+    st.subheader("📉 Resíduos do ANFIS")
+    residuals_anfis = y_test_real - y_pred_anfis
+    fig4, ax4 = plt.subplots(figsize=(8, 3))
+    ax4.plot(residuals_anfis, color='blue', label='Resíduo')
+    ax4.axhline(0, linestyle='--', color='gray')
+    ax4.set_title("Resíduos ANFIS")
+    ax4.set_xlabel("Amostras")
+    ax4.set_ylabel("Erro (real - previsto)")
+    ax4.grid(True, linestyle='--', alpha=0.5)
+    st.pyplot(fig4)
+
+    st.subheader("📉 Resíduos do MLP")
+    residuals_mlp = y_test_real - y_pred_mlp
+    fig5, ax5 = plt.subplots(figsize=(8, 3))
+    ax5.plot(residuals_mlp, color='orange', label='Resíduo')
+    ax5.axhline(0, linestyle='--', color='gray')
+    ax5.set_title("Resíduos MLP")
+    ax5.set_xlabel("Amostras")
+    ax5.set_ylabel("Erro (real - previsto)")
+    ax5.grid(True, linestyle='--', alpha=0.5)
+    st.pyplot(fig5)
