@@ -34,7 +34,7 @@ st.header("⚙️ Parâmetros da ANFIS")
 col1, col2 = st.columns(2)
 with col1:
     n_rules = st.slider("Número de regras fuzzy", 2, 10, 4)
-    mf_type = st.selectbox("Tipo de função de pertinência", ["gaussiana"])  # Futuro: triangular, trapezoidal
+    mf_type = st.selectbox("Tipo de função de pertinência", ["gaussiana"])
 with col2:
     epochs = st.slider("Épocas", 10, 500, 100, step=10)
     learning_rate = st.slider("Taxa de aprendizado", 0.001, 0.1, 0.01)
@@ -57,8 +57,14 @@ if st.button("🚀 Treinar modelos"):
         y_test_real = scaler_y.inverse_transform(y_test.reshape(-1, 1)).flatten()
 
     with st.spinner("Treinando MLP..."):
-        mlp = MLPRegressor(hidden_layer_sizes=(10, 10), max_iter=epochs, learning_rate_init=learning_rate, random_state=42)
-        mlp.fit(X_train, y_train)
+        mlp = MLPRegressor(hidden_layer_sizes=(10, 10), max_iter=1, warm_start=True,
+                           learning_rate_init=learning_rate, random_state=42)
+        mlp_loss = []
+        for _ in range(epochs):
+            mlp.fit(X_train, y_train)
+            y_train_pred = mlp.predict(X_train)
+            loss = mean_absolute_error(y_train, y_train_pred)
+            mlp_loss.append(loss)
         y_pred_mlp_scaled = mlp.predict(X_test)
         y_pred_mlp = scaler_y.inverse_transform(y_pred_mlp_scaled.reshape(-1, 1)).flatten()
 
@@ -76,18 +82,28 @@ if st.button("🚀 Treinar modelos"):
         st.write(f"RMSE: {np.sqrt(mean_squared_error(y_test_real, y_pred_mlp)):.4f}")
         st.write(f"R²: {r2_score(y_test_real, y_pred_mlp):.4f}")
 
-    # --- Gráfico comparativo ---
-    st.subheader("🔍 Comparativo Visual")
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.plot(y_test_real, label="Real", alpha=0.7)
-    ax.plot(y_pred_anfis, label="ANFIS", alpha=0.7)
-    ax.plot(y_pred_mlp, label="MLP", alpha=0.7)
-    ax.set_xlabel("Amostras")
-    ax.set_ylabel("Consumo de Energia (kW)")
-    ax.legend()
-    st.pyplot(fig)
+    # --- Comparativos Real vs Previsao ---
+    st.subheader("📊 Real vs ANFIS")
+    fig_real_anfis, ax1 = plt.subplots()
+    ax1.plot(y_test_real, label="Real", alpha=0.7)
+    ax1.plot(y_pred_anfis, label="ANFIS", alpha=0.7)
+    ax1.set_title("Real vs ANFIS")
+    ax1.set_xlabel("Amostras")
+    ax1.set_ylabel("Consumo de Energia (kW)")
+    ax1.legend()
+    st.pyplot(fig_real_anfis)
 
-    # --- Curva de Convergência ---
+    st.subheader("📊 Real vs MLP")
+    fig_real_mlp, ax2 = plt.subplots()
+    ax2.plot(y_test_real, label="Real", alpha=0.7)
+    ax2.plot(y_pred_mlp, label="MLP", alpha=0.7)
+    ax2.set_title("Real vs MLP")
+    ax2.set_xlabel("Amostras")
+    ax2.set_ylabel("Consumo de Energia (kW)")
+    ax2.legend()
+    st.pyplot(fig_real_mlp)
+
+    # --- Curvas de Convergência ---
     st.subheader("📉 Curva de Convergência do ANFIS")
     fig2, ax2 = plt.subplots()
     ax2.plot(anfis.loss_history, marker='o')
@@ -95,3 +111,11 @@ if st.button("🚀 Treinar modelos"):
     ax2.set_ylabel("MAE")
     ax2.set_title("Convergência do ANFIS")
     st.pyplot(fig2)
+
+    st.subheader("📉 Curva de Convergência do MLP")
+    fig3, ax3 = plt.subplots()
+    ax3.plot(mlp_loss, marker='s', color='orange')
+    ax3.set_xlabel("Épocas")
+    ax3.set_ylabel("MAE")
+    ax3.set_title("Convergência do MLP")
+    st.pyplot(fig3)
