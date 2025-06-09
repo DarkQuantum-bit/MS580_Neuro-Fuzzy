@@ -9,6 +9,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from ucimlrepo import fetch_ucirepo
 from anfis_model import ANFIS
+import time
 
 st.set_page_config(layout="wide")
 st.title("📈 Comparação: Neuro-Fuzzy ANFIS vs MLP")
@@ -59,15 +60,24 @@ X_scaled = scaler_X.fit_transform(X)
 y_scaled = scaler_y.fit_transform(y.reshape(-1, 1)).flatten()
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
 
+# Exibe quantidade de dados usados
+st.write(f"🔢 Total de amostras utilizadas: {len(X)}")
+st.write(f"📚 Amostras de treino: {len(X_train)}")
+st.write(f"🧪 Amostras de teste: {len(X_test)}")
+
 if st.button("🚀 Treinar modelos"):
     with st.spinner("Treinando ANFIS..."):
+        start_anfis = time.time()
         anfis = ANFIS(X_train, y_train, n_rules, len(features))
         anfis.train(epochs=epochs, learning_rate=learning_rate)
+        end_anfis = time.time()
+        time_anfis = end_anfis - start_anfis
         y_pred_anfis_scaled = anfis.predict(X_test)
         y_pred_anfis = scaler_y.inverse_transform(y_pred_anfis_scaled.reshape(-1, 1)).flatten()
         y_test_real = scaler_y.inverse_transform(y_test.reshape(-1, 1)).flatten()
 
     with st.spinner("Treinando MLP..."):
+        start_mlp = time.time()
         mlp = MLPRegressor(hidden_layer_sizes=(10, 10), max_iter=1, warm_start=True,
                            learning_rate_init=learning_rate, random_state=42)
         mlp_loss = []
@@ -76,11 +86,16 @@ if st.button("🚀 Treinar modelos"):
             y_train_pred = mlp.predict(X_train)
             loss = mean_absolute_error(y_train, y_train_pred)
             mlp_loss.append(loss)
+        end_mlp = time.time()
+        time_mlp = end_mlp - start_mlp
         y_pred_mlp_scaled = mlp.predict(X_test)
         y_pred_mlp = scaler_y.inverse_transform(y_pred_mlp_scaled.reshape(-1, 1)).flatten()
 
     # --- Resultados ---
     st.subheader("📈 Resultados")
+    st.success(f"⏱️ Tempo de treinamento do ANFIS: {time_anfis:.2f} segundos")
+    st.success(f"⏱️ Tempo de treinamento do MLP: {time_mlp:.2f} segundos")
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("### ANFIS")
