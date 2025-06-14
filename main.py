@@ -47,7 +47,7 @@ elif preset == "Balanceado (4 regras, 100 épocas, LR=0.01)":
     n_rules = 4
     epochs = 100
     learning_rate = 0.01
-elif:
+elif preset == "Preciso (6 regras, 200 épocas, LR=0.005)":
     n_rules = 6
     epochs = 200
     learning_rate = 0.005
