@@ -35,7 +35,8 @@ st.header("⚙️ Configuração do Modelo ANFIS")
 preset = st.selectbox("Escolha um perfil de configuração:", [
     "Rápido (2 regras, 50 épocas, LR=0.05)",
     "Balanceado (4 regras, 100 épocas, LR=0.01)",
-    "Preciso (6 regras, 200 épocas, LR=0.005)"
+    "Preciso (6 regras, 200 épocas, LR=0.005)",
+    "Extremo (10 regras, 200 épocas, LR=0.005)"
 ])
 
 if preset == "Rápido (2 regras, 50 épocas, LR=0.05)":
@@ -46,8 +47,12 @@ elif preset == "Balanceado (4 regras, 100 épocas, LR=0.01)":
     n_rules = 4
     epochs = 100
     learning_rate = 0.01
-else:
+elif:
     n_rules = 6
+    epochs = 200
+    learning_rate = 0.005
+else:
+    n_rules = 10
     epochs = 200
     learning_rate = 0.005
 
