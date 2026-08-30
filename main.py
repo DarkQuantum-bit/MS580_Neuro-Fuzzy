@@ -14,10 +14,10 @@ import time
 
 # Configuração da página Streamlit
 st.set_page_config(layout="wide")
-st.title("📈 Comparação: Neuro-Fuzzy ANFIS vs MLP")
+st.title("Comparação: Neuro-Fuzzy ANFIS vs MLP")
 
 # === Seção de carregamento e preparação dos dados ===
-st.header("📊 Configuração dos Dados")
+st.header("Configuração dos Dados")
 dataset = fetch_ucirepo(id=235)  # Carrega dataset de energia elétrica da UCI (Individual household electric power consumption)
 df = pd.concat([dataset.data.features, dataset.data.targets], axis=1)
 
@@ -39,7 +39,7 @@ features = st.multiselect("Variáveis de entrada", df.columns.tolist(), default=
 target = st.selectbox("Variável alvo", df.columns, index=df.columns.get_loc('Global_active_power'))
 
 # === Configuração do modelo ANFIS ===
-st.header("⚙️ Configuração do Modelo ANFIS")
+st.header("Configuração do Modelo ANFIS")
 preset = st.selectbox("Escolha um perfil de configuração:", [
     "Rápido (2 regras, 50 épocas, LR=0.05)",
     "Balanceado (4 regras, 100 épocas, LR=0.01)",
@@ -74,12 +74,12 @@ y_scaled = scaler_y.fit_transform(y.reshape(-1, 1)).flatten()
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
 
 # Exibe estatísticas do conjunto de dados
-st.write(f"🔢 Total de amostras utilizadas: {len(X)}")
-st.write(f"📚 Amostras de treino: {len(X_train)}")
-st.write(f"🧪 Amostras de teste: {len(X_test)}")
+st.write(f"Total de amostras utilizadas: {len(X)}")
+st.write(f"Amostras de treino: {len(X_train)}")
+st.write(f"Amostras de teste: {len(X_test)}")
 
 # === Treinamento dos modelos ANFIS e MLP ===
-if st.button("🚀 Treinar modelos"):
+if st.button("Treinar modelos"):
     # --- Treinamento ANFIS ---
     with st.spinner("Treinando ANFIS..."):
         start_anfis = time.time()
@@ -115,9 +115,9 @@ if st.button("🚀 Treinar modelos"):
         y_pred_mlp = scaler_y.inverse_transform(y_pred_mlp_scaled.reshape(-1, 1)).flatten()
 
     # === Avaliação dos modelos ===
-    st.subheader("📈 Resultados")
-    st.success(f"⏱️ Tempo de treinamento do ANFIS: {time_anfis:.2f} segundos")
-    st.success(f"⏱️ Tempo de treinamento do MLP: {time_mlp:.2f} segundos")
+    st.subheader("Resultados")
+    st.success(f"Tempo de treinamento do ANFIS: {time_anfis:.2f} segundos")
+    st.success(f"Tempo de treinamento do MLP: {time_mlp:.2f} segundos")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -132,7 +132,7 @@ if st.button("🚀 Treinar modelos"):
         st.write(f"R²: {r2_score(y_test_real, y_pred_mlp):.4f}")
 
     # === Visualização: Real vs Previsão ===
-    st.subheader("📊 Real vs ANFIS")
+    st.subheader("Real vs ANFIS")
     fig_real_anfis, ax1 = plt.subplots(figsize=(10, 4))
     ax1.plot(y_test_real, label="Real", alpha=0.7)
     ax1.plot(y_pred_anfis, label="ANFIS", alpha=0.7)
@@ -143,7 +143,7 @@ if st.button("🚀 Treinar modelos"):
     ax1.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig_real_anfis)
 
-    st.subheader("📊 Real vs MLP")
+    st.subheader("Real vs MLP")
     fig_real_mlp, ax2 = plt.subplots(figsize=(10, 4))
     ax2.plot(y_test_real, label="Real", alpha=0.7)
     ax2.plot(y_pred_mlp, label="MLP", alpha=0.7)
@@ -155,7 +155,7 @@ if st.button("🚀 Treinar modelos"):
     st.pyplot(fig_real_mlp)
 
     # === Visualização: Curvas de convergência ===
-    st.subheader("📉 Curva de Convergência do ANFIS")
+    st.subheader("Curva de Convergência do ANFIS")
     fig2, ax2 = plt.subplots(figsize=(8, 3))
     ax2.plot(anfis.loss_history, marker='o', color='blue')
     ax2.set_xlabel("Épocas")
@@ -164,7 +164,7 @@ if st.button("🚀 Treinar modelos"):
     ax2.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig2)
 
-    st.subheader("📉 Curva de Convergência do MLP")
+    st.subheader("Curva de Convergência do MLP")
     fig3, ax3 = plt.subplots(figsize=(8, 3))
     ax3.plot(mlp_loss, marker='s', color='orange')
     ax3.set_xlabel("Épocas")
@@ -174,7 +174,7 @@ if st.button("🚀 Treinar modelos"):
     st.pyplot(fig3)
 
     # === Gráficos de resíduos (erros) ===
-    st.subheader("📉 Resíduos do ANFIS")
+    st.subheader("Resíduos do ANFIS")
     residuals_anfis = y_test_real - y_pred_anfis
     fig4, ax4 = plt.subplots(figsize=(8, 3))
     ax4.plot(residuals_anfis, color='blue', label='Resíduo')
@@ -185,7 +185,7 @@ if st.button("🚀 Treinar modelos"):
     ax4.grid(True, linestyle='--', alpha=0.5)
     st.pyplot(fig4)
 
-    st.subheader("📉 Resíduos do MLP")
+    st.subheader("Resíduos do MLP")
     residuals_mlp = y_test_real - y_pred_mlp
     fig5, ax5 = plt.subplots(figsize=(8, 3))
     ax5.plot(residuals_mlp, color='orange', label='Resíduo')
