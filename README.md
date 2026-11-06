@@ -1,5 +1,5 @@
 
-# MS580 — Sistemas Neuro-Fuzzy: ANFIS vs. MLP
+# MS580 — Sistemas Neuro-Fuzzy: ANFIS
 
 **Implementação e avaliação comparativa de um sistema de inferência neuro-fuzzy adaptativo e uma rede neural Multilayer Perceptron para regressão de dados de consumo energético.**
 
